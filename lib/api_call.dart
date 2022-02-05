@@ -19,12 +19,19 @@ class Users {
       );
 }
 
-Future<Users> getUsers() async {
+Future<List<Users>> getUsers() async {
   final response = await http.get(
     Uri.parse('https://jsonplaceholder.typicode.com/users'),
   );
   if (response.statusCode == 200) {
-    return Users.fromJson(json.decode(response.body)[0]);
+    var jsonResponse = json.decode(response.body);
+    List<Users> users = [];
+    for (var u in jsonResponse) {
+      Users user =
+          Users(name: u['name'], username: u['username'], email: u['email']);
+      users.add(user);
+    }
+    return users;
   } else {
     throw Exception('Failed to load post');
   }

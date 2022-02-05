@@ -13,8 +13,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
-  late Future<Users> users;
+  late Future<List<Users>> users;
 
   @override
   void initState() {
@@ -31,26 +30,27 @@ class _MyAppState extends State<MyApp> {
         title: const Text('Api Calls in Flutter'),
         centerTitle: true,
       ),
-      body: Center(child: FutureBuilder<Users>(
-        future: users,
-        builder: (context, snapshot){
-          if(snapshot.hasData){
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Text(snapshot.data!.name),
-                Text(snapshot.data!.email),
-                Text(snapshot.data!.username),
-              ],
-            );
-          }else if (snapshot.hasError){
-            return Text(snapshot.error.toString());
-          }else{
-            return CircularProgressIndicator();
-          }
-        }
-        ),),
+      body: Center(
+        child: FutureBuilder<List<Users>>(
+            future: users,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return ListView.builder(
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(snapshot.data![index].name),
+                        subtitle: Text(snapshot.data![index].email),
+                        trailing: Text(snapshot.data![index].username),
+                      );
+                    });
+              } else if (snapshot.hasError) {
+                return Text(snapshot.error.toString());
+              } else {
+                return CircularProgressIndicator();
+              }
+            }),
+      ),
     ));
   }
 }
